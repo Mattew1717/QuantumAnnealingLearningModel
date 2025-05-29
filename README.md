@@ -5,6 +5,7 @@
 This project explores the application of Ising models to various machine learning tasks, including classification and regression. It features implementations of single Ising-based perceptrons, networks of these perceptrons, and ensembles. The project also includes different solver backends for the Ising models, such as exact solvers, simulated annealing, and Quantum Processing Unit (QPU) based approaches (via D-Wave).
 
 ## Directory Structure
+Markdown
 .
 ├── LICENSE.md
 ├── README.md
