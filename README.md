@@ -5,6 +5,7 @@
 This project explores the application of Ising models to various machine learning tasks, including classification and regression. It features implementations of single Ising-based perceptrons, networks of these perceptrons, and ensembles. The project also includes different solver backends for the Ising models, such as exact solvers, simulated annealing, and Quantum Processing Unit (QPU) based approaches (via D-Wave).
 
 ## Directory Structure
+'''
 .
 ├── LICENSE.md
 ├── README.md
@@ -52,7 +53,6 @@ This project explores the application of Ising models to various machine learnin
 *   **`SingleIsingModule_Improved/ising_learning_model/`**: This is the core library providing the foundational elements for Ising model-based learning.
     *   It defines the base `model.py` class and specific implementations for different solvers: `exact_model.py`, `sim_anneal_model.py` (Simulated Annealing), and `qpu_model.py` (Quantum Processing Unit).
     *   Custom data handling (`data.py`) and utility functions (`utils.py`) specific to this library are included.
-    *   Jupyter notebooks (`bas_data.ipynb`, `function_data.ipynb`) are present for data generation and exploratory analysis for specific problems like Bars and Stripes and function approximation.
 
 *   **`mainFolder/`**: Contains the main executable Python scripts that demonstrate the application of the `ising_learning_model` components to various machine learning problems. Each script is typically tailored to a specific dataset or problem type (e.g., XOR, MNIST, Breast Cancer, Synthetic Functions, Bars and Stripes).
 
