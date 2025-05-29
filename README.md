@@ -5,7 +5,6 @@
 This project explores the application of Ising models to various machine learning tasks, including classification and regression. It features implementations of single Ising-based perceptrons, networks of these perceptrons, and ensembles. The project also includes different solver backends for the Ising models, such as exact solvers, simulated annealing, and Quantum Processing Unit (QPU) based approaches (via D-Wave).
 
 ## Directory Structure
-Markdown
 .
 ├── LICENSE.md
 ├── README.md
@@ -41,6 +40,7 @@ Markdown
 ├── MNISTmain.py # Main script for the MNIST dataset classification
 ├── sinteticFunc.py # Main script for synthetic function approximation (regression)
 └── XORmain.py # Main script for the XOR problem classification
+
 ## Key Components
 
 *   **`datasets/`**: Contains various CSV files used for training and testing the models. These include datasets for problems like Iris classification, seeds classification, and breast cancer diagnosis.
