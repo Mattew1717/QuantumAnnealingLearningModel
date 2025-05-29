@@ -1,8 +1,10 @@
-# Ising Model Machine Learning Project
+# Ising Learning Model
 
 ## Overview
 
-This project explores the application of Ising models to various machine learning tasks, including classification and regression. It features implementations of single Ising-based perceptrons, networks of these perceptrons, and ensembles. The project also includes different solver backends for the Ising models, such as exact solvers, simulated annealing, and Quantum Processing Unit (QPU) based approaches (via D-Wave).
+This project explores the application of Ising models to various machine learning tasks, including classification and regression. **The core `ising_learning_model` package is based on and significantly extends the work presented in the "Ising Learning Model", available at [https://github.com/lsschmid/ising-learning-model](https://github.com/lsschmid/ising-learning-model) and detailed in their accompanying research paper (arXiv: https://arxiv.org/pdf/2310.18411).**
+
+This repository includes custom implementations of Ising-based perceptrons, networks of these perceptrons, and ensembles, leveraging PyTorch for enhanced flexibility. The project also retains and utilizes different solver backends for the Ising models, including exact solvers, simulated annealing, and Quantum Processing Unit (QPU) based approaches (via D-Wave). The primary goal of this work is to further investigate and expand upon the capabilities of Ising models in machine learning.
 
 ## Directory Structure
 ```
@@ -65,9 +67,9 @@ The project tackles several machine learning problems:
     *   Breast Cancer (`breastCancer.py`, `testPercClass.py`, `testNET_Class.py`)
     *   Iris (`IRISmain.py`)
     *   MNIST (`MNISTmain.py`)
-    *   Bars and Stripes (`BasStrip.py`, `bas_data.ipynb`)
+    *   Bars and Stripes (`BasStrip.py`)
 *   **Regression**:
-    *   Synthetic Function Approximation (`sinteticFunc.py`, `testPercRegr.py`, `testNET_Regr.py`, `function_data.ipynb`)
+    *   Synthetic Function Approximation (`sinteticFunc.py`, `testPercRegr.py`, `testNET_Regr.py`)
 
 ## How to Run
 
