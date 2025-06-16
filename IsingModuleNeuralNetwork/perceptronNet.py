@@ -82,7 +82,8 @@ class MultiIsingNetwork(nn.Module):
                     print_every: int = 10):
         
         self.to(device)
-    
+
+        losses = []
         for epoch in range(epochs):
             self.train() 
 
@@ -102,9 +103,12 @@ class MultiIsingNetwork(nn.Module):
                 num_batches += 1
 
             avg_epoch_loss = running_loss / num_batches
+            losses.append(avg_epoch_loss)
             if (epoch + 1) % print_every == 0:
                 print(f"[Epoch {epoch+1}/{epochs}] Loss Media: {avg_epoch_loss:.4f}")
 
+        return losses
+    
     def test(self,
                 test_loader: DataLoader,
                 device: torch.device) -> Tuple[np.ndarray, np.ndarray]:
