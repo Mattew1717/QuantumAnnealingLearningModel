@@ -3,7 +3,7 @@ import torch.nn as nn
 import numpy as np
 from utils import AnnealingSettings
 from data_ import SimpleDataset, HiddenNodesInitialization
-from perceptronNet import MultiIsingNetwork
+from IsingModuleNeuralNetwork.NeuralNetIsing import MultiIsingNetwork
 from torch.utils.data import DataLoader, TensorDataset
 import matplotlib.pyplot as plt
 

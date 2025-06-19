@@ -195,13 +195,13 @@ class Model(ABC):
             sys.exit()
 
         threads = []
-        results = [None] * NUM_THREADS  # Prealloca una lista per mantenere l'ordine
+        results = [None] * NUM_THREADS  # Preallocate a list to store results in the correct order
 
         def run(thread_index, sub_thetas, sub_ys):
             res = self._sample_mbt(sub_thetas, sub_ys)
-            results[thread_index] = res  # Assegna il risultato nella posizione corretta
+            results[thread_index] = res  # save the result in the correct index
 
-        # Divide i dati tra i thread
+        # divide the batch into NUM_THREADS parts
         batch_size_mini = len(ys) // NUM_THREADS
         for i in range(NUM_THREADS):
             start = i * batch_size_mini
@@ -213,7 +213,7 @@ class Model(ABC):
         for thread in threads:
             thread.join()
 
-        # Unisce i risultati
+        # Combine the results from all threads
         for res in results:
             losses_bulk.extend(res[0])
             energies_bulk.extend(res[1])
@@ -391,8 +391,9 @@ class Model(ABC):
                     self._lmd -= eta_lmd * delta_lmd
                     self._offset -= eta_offset * delta_offset
                     
-                    for thetas, ys, indices in train_loader:
-                        thetas -= eta_theta * delta_theta
+                    #theta learning experiment
+                    #for thetas, ys, indices in train_loader:
+                    #    thetas -= eta_theta * delta_theta
                         #print(thetas)
 
                     loss = np.mean(losses_bulk)
@@ -489,7 +490,6 @@ class Model(ABC):
 
         :return: ModelResults
         """
-        #aggiunge hidden nodes al test set
         test_set.resize(self.size, self.settings.hidden_nodes_init)
         
         if gammas is None:

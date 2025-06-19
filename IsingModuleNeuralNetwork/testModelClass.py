@@ -5,6 +5,8 @@ import torch
 import torch.nn as nn
 import numpy as np
 import pandas as pd
+import matplotlib
+matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 import seaborn as sns
 import random
@@ -15,7 +17,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 from utils import AnnealingSettings
 from data_ import SimpleDataset, HiddenNodesInitialization
-from IsingModuleNeuralNetwork.NeuralNetIsing import MultiIsingNetwork
+from IsingModuleNeuralNetwork.IsingModule import FullIsingModule
 
 # --- Utility Functions ---
 
@@ -38,9 +40,6 @@ def generate_xor_balanced(dim, n_samples_dim=1000, shuffle=True, random_seed=42)
     return samples, labels
 
 def get_next_plot_filename(base_name, dataset_name, ext):
-    """
-    Returns a unique filename for saving plots.
-    """
     os.makedirs("Plots", exist_ok=True)
     safe_dataset = os.path.splitext(os.path.basename(dataset_name))[0].replace(" ", "_")
     pattern = f"Plots/{base_name}_{safe_dataset}_*.{ext}"
@@ -55,10 +54,7 @@ def get_next_plot_filename(base_name, dataset_name, ext):
     next_num = max(nums) + 1 if nums else 1
     return f"Plots/{base_name}_{safe_dataset}_{next_num}.{ext}"
 
-def plot_confusion_matrix_scientific(y_true, y_pred, save_path="confusion_matrix_NET.png"):
-    """
-    Save a scientific confusion matrix plot.
-    """
+def plot_confusion_matrix_scientific(y_true, y_pred, save_path="confusion_matrix_Model.png"):
     plt.style.use('classic')
     cm = confusion_matrix(y_true, y_pred, labels=CLASSES)
     fig, ax = plt.subplots(figsize=(5, 4))
@@ -77,10 +73,7 @@ def plot_confusion_matrix_scientific(y_true, y_pred, save_path="confusion_matrix
     plt.savefig(save_path, dpi=300, bbox_inches='tight', transparent=False)
     plt.close(fig)
 
-def plot_results_table_scientific(params, accuracy, training_loss, test_loss, errors_class_0, errors_class_1, training_time, save_path="results_table_NET.png"):
-    """
-    Save a scientific table of results.
-    """
+def plot_results_table_scientific(params, accuracy, training_loss, test_loss, errors_class_0, errors_class_1, training_time, save_path="results_table_Model.png"):
     plt.style.use('classic')
     fig, ax = plt.subplots(figsize=(8, len(params) * 0.35 + 2))
     ax.axis('off')
@@ -114,9 +107,6 @@ def plot_results_table_scientific(params, accuracy, training_loss, test_loss, er
     plt.close(fig)
 
 def plot_training_loss(training_losses, dataset_name, save_path=None):
-    """
-    Plot training loss curve (loss vs epochs) and save as scientific plot.
-    """
     plt.style.use('classic')
     fig, ax = plt.subplots(figsize=(6, 4))
     ax.plot(range(1, len(training_losses) + 1), training_losses, marker='o', color='black', linewidth=2)
@@ -126,11 +116,11 @@ def plot_training_loss(training_losses, dataset_name, save_path=None):
     ax.grid(True, linestyle='--', linewidth=0.5, alpha=0.7)
     plt.tight_layout()
     if save_path is None:
-        save_path = get_next_plot_filename("training_loss_NET", dataset_name, "png")
+        save_path = get_next_plot_filename("training_loss_Model", dataset_name, "png")
     plt.savefig(save_path, dpi=300, bbox_inches='tight', transparent=False)
     plt.close(fig)
 
-def load_csv_dataset(csv_path):
+def load_dataset(csv_path):
     df = pd.read_csv(csv_path)
     df.iloc[:, -1] = df.iloc[:, -1].replace({-1: CLASSES[0], 1: CLASSES[1]})
     X = df.iloc[:, :-1].values.astype(np.float32)
@@ -141,26 +131,23 @@ def load_csv_dataset(csv_path):
 
 # --- Hyperparameters and Settings ---
 
-PARTITION_INPUT = False
-NUM_ISING_PERCEPTRONS = 2
-SIZE = 20
-BATCH_SIZE = 32
-EPOCHS = 200
-DATA_INPUT_DIM = 4
-TRAINING_SAMPLES = 200
-TEST_SAMPLES = 100
+SIZE = 8
+BATCH_SIZE = 16
+EPOCHS = 400
 
 LAMBDA_INIT = -0.01
 OFFSET_INIT = 0
 LEARNING_RATE_GAMMA = 0.05
 LEARNING_RATE_LAMBDA = 0.05
 LEARNING_RATE_OFFSET = 0.05
-LR_COMBINER = 0.001
 
-PERCENT_TRAIN = 0.5
+PERCENT_TRAIN = 0.5 
 PERCENT_TEST = 1 - PERCENT_TRAIN
 CLASSES = [0, 1]
 
+DATA_INPUT_DIM = 3
+TRAINING_SAMPLES = 200
+TEST_SAMPLES = 1
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 RANDOM_SEED = 42
 
@@ -168,15 +155,13 @@ RANDOM_SEED = 42
 SA_settings = AnnealingSettings()
 SA_settings.beta_range = [1, 10]
 SA_settings.num_reads = 1
-SA_settings.num_sweeps = 1000
+SA_settings.num_sweeps = 100
 SA_settings.sweeps_per_beta = 1
 
 # Hidden nodes parameters
 HN_init = "function"
 HN_function = SimpleDataset.offset
-HN_fun_args = [-1 / SIZE * 1]
-
-# --- Main Execution ---
+HN_fun_args = [-0.1]
 
 if __name__ == '__main__':
     torch.set_num_threads(os.cpu_count())
@@ -191,12 +176,14 @@ if __name__ == '__main__':
 
     # --- Data preparation (XOR 2D) ---
     X, y = generate_xor_balanced(DATA_INPUT_DIM, n_samples_dim=TRAINING_SAMPLES, shuffle=True)
-    X_train = torch.tensor(X, dtype=torch.float32)
-    y_train = torch.tensor(y, dtype=torch.float32)
+    X = torch.tensor(X, dtype=torch.float32)
+    y = torch.tensor(y, dtype=torch.float32)
 
-    X, y = generate_xor_balanced(DATA_INPUT_DIM, n_samples_dim=TEST_SAMPLES, shuffle=True)
-    X_test = torch.tensor(X, dtype=torch.float32)
-    y_test = torch.tensor(y, dtype=torch.float32)
+    idx = torch.randperm(len(y))
+    X, y = X[idx], y[idx]
+    split = int(len(y) * PERCENT_TRAIN)
+    X_train, y_train = X[:split], y[:split]
+    X_test, y_test = X[split:], y[split:]
 
     dataset = SimpleDataset()
     test_set = SimpleDataset()
@@ -214,20 +201,13 @@ if __name__ == '__main__':
     hn.function = HN_function
     hn.fun_args = HN_fun_args
 
-    if PARTITION_INPUT:
-        dataset.resize(SIZE * NUM_ISING_PERCEPTRONS, hn)
-        dataset.len = len(dataset.y)
-        dataset.data_size = len(dataset.x[0])
-        test_set.resize(SIZE * NUM_ISING_PERCEPTRONS, hn)
-        test_set.len = len(test_set.y)
-        test_set.data_size = len(test_set.x[0])
-    else:
-        dataset.resize(SIZE, hn)
-        dataset.len = len(dataset.y)
-        dataset.data_size = len(dataset.x[0])
-        test_set.resize(SIZE, hn)
-        test_set.len = len(test_set.y)
-        test_set.data_size = len(test_set.x[0])
+    dataset.resize(SIZE, hn)
+    dataset.len = len(dataset.y)
+    dataset.data_size = len(dataset.x[0])
+
+    test_set.resize(SIZE, hn)
+    test_set.len = len(test_set.y)
+    test_set.data_size = len(test_set.x[0])
 
     train_loader = DataLoader(
         TensorDataset(dataset.x, dataset.y),
@@ -242,63 +222,70 @@ if __name__ == '__main__':
     )
 
     # Model definition
-    model = MultiIsingNetwork(
-        num_ising_perceptrons=NUM_ISING_PERCEPTRONS,
-        sizeAnnealModel=SIZE,
-        anneal_settings=SA_settings,
-        lambda_init=LAMBDA_INIT,
-        offset_init=OFFSET_INIT,
-        partition_input=PARTITION_INPUT
-    ).to(DEVICE)
-
-    # Optimizer setup
-    optimizer_grouped_parameters = []
-    for p_idx, single_module in enumerate(model.ising_perceptrons_layer):
-        optimizer_grouped_parameters.append({'params': [single_module.ising_layer.gamma], 'lr': LEARNING_RATE_GAMMA, 'name': f'gamma_{p_idx}'})
-        optimizer_grouped_parameters.append({'params': [single_module.lmd], 'lr': LEARNING_RATE_LAMBDA, 'name': f'lambda_{p_idx}'})
-        optimizer_grouped_parameters.append({'params': [single_module.offset], 'lr': LEARNING_RATE_OFFSET, 'name': f'offset_{p_idx}'})
-    optimizer_grouped_parameters.append({'params': model.combiner_layer.parameters(), 'lr': LR_COMBINER, 'name': 'combiner'})
-
-    optimizer = torch.optim.SGD(optimizer_grouped_parameters, momentum=0.9)
+    model = FullIsingModule(SIZE, SA_settings, LAMBDA_INIT, OFFSET_INIT).to(DEVICE)
+    
+    optimizer = torch.optim.SGD([
+        {'params': [model.ising_layer.gamma], 'lr': LEARNING_RATE_GAMMA},
+        {'params': [model.lmd], 'lr': LEARNING_RATE_LAMBDA},
+        {'params': [model.offset], 'lr': LEARNING_RATE_OFFSET},
+    ], momentum=0.9)
     loss_fn = nn.MSELoss()
-    #optimizer = torch.optim.Adam(optimizer_grouped_parameters)
-    #loss_fn = nn.BCEWithLogitsLoss()
-
+    '''
+    optimizer = torch.optim.Adam([
+        {'params': [model.ising_layer.gamma], 'lr': LEARNING_RATE_GAMMA},
+        {'params': [model.lmd], 'lr': LEARNING_RATE_LAMBDA},
+        {'params': [model.offset], 'lr': LEARNING_RATE_OFFSET},
+    ])
+    loss_fn = nn.BCEWithLogitsLoss()
+    '''
     # Training
     start_time = time.time()
-    training_losses = model.train_model(train_loader, optimizer, loss_fn, EPOCHS, DEVICE, print_every=1)
+    training_losses = []
+    for epoch in range(EPOCHS):
+        for x_batch, y_batch in train_loader:
+            x_batch = x_batch.to(DEVICE)
+            y_batch = y_batch.to(DEVICE)
+            model.train()
+            optimizer.zero_grad()
+            pred = model(x_batch).view(-1)
+            loss = loss_fn(pred, y_batch)
+            loss.backward()
+            optimizer.step()
+        training_losses.append(loss.item())
     training_loss = training_losses[-1]
     end_time = time.time()
 
-    # Testing
-    predictions_test, targets_test = model.test(test_loader, DEVICE)
-    loss_test = loss_fn(torch.tensor(predictions_test, dtype=torch.float32).view(-1), torch.tensor(targets_test, dtype=torch.float32).view(-1)).item()
-
-    predictions = np.where(predictions_test < (abs(CLASSES[1]) - abs(CLASSES[0])) / 2, CLASSES[0], CLASSES[1])
-    errors = predictions != targets_test
-    errors_class_0 = np.sum((targets_test == CLASSES[0]) & errors)
-    errors_class_1 = np.sum((targets_test == CLASSES[1]) & errors)
-    print(predictions)
-    print(targets_test)
-    accuracy = accuracy_score(predictions, targets_test)
-
+    # Plot training loss
     dataset_name = "xor_balanced"
-
     plot_training_loss(training_losses, dataset_name)
-    cm_path = get_next_plot_filename("confusion_matrix_NET", dataset_name, "png")
-    table_path = get_next_plot_filename("results_table_NET", dataset_name, "png")
-    print(dataset.y)
-    plot_confusion_matrix_scientific(targets_test, predictions, save_path=cm_path)
+
+    # Test
+    model.eval()
+    with torch.no_grad():
+        preds_tensor = model(dataset.x.to(DEVICE)).cpu().view(-1)
+        loss_test = loss_fn(preds_tensor, dataset.y.cpu().view(-1)).item()
+        preds = preds_tensor.numpy()
+
+    predictions = np.where(preds < 0.5, CLASSES[0], CLASSES[1])
+    targets = dataset.y.cpu().numpy()
+    errors = predictions != targets
+    errors_class_0 = np.sum((targets == CLASSES[0]) & errors)
+    errors_class_1 = np.sum((targets == CLASSES[1]) & errors)
+    accuracy = accuracy_score(predictions, targets)
+
+    # Save scientific plots
+    cm_path = get_next_plot_filename("confusion_matrix_Model", dataset_name, "png")
+    table_path = get_next_plot_filename("results_table_Model", dataset_name, "png")
+
+    plot_confusion_matrix_scientific(targets, predictions, save_path=cm_path)
 
     params = [
         ["Dataset", dataset_name],
         ["Train samples", TRAINING_SAMPLES],
         ["Test samples", TEST_SAMPLES],
         ["Input dim", DATA_INPUT_DIM],
-        #["Total samples", len(dataset.x) + len(test_set.x)],
         ["Class labels", CLASSES],
-        ["Num Ising Perceptrons", NUM_ISING_PERCEPTRONS],
-        ["Size Single Ising Perceptron", SIZE],
+        ["Model size", SIZE],
         ["Batch size", BATCH_SIZE],
         ["Epochs", EPOCHS],
         ["Lambda init", LAMBDA_INIT],
@@ -313,14 +300,13 @@ if __name__ == '__main__':
         ["SA num reads", SA_settings.num_reads],
         ["SA num sweeps", SA_settings.num_sweeps],
         ["SA sweeps per beta", SA_settings.sweeps_per_beta],
-        ["Partition input", PARTITION_INPUT],
         ["Optimizer", type(optimizer).__name__],
         ["Loss function", type(loss_fn).__name__],
     ]
 
     plot_results_table_scientific(
         params, accuracy, training_loss, loss_test,
-        errors_class_0, errors_class_1, 
-        training_time= (end_time - start_time),
+        errors_class_0, errors_class_1,
+        training_time=(end_time - start_time),
         save_path=table_path
     )
