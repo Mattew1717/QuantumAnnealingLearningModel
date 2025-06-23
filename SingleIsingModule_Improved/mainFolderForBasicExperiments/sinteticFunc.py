@@ -1,8 +1,11 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import numpy as np
 import matplotlib.pyplot as plt
 from ising_learning_model.data import SimpleDataset, HiddenNodesInitialization, GammaInitialization
 from ising_learning_model.sim_anneal_model import SimAnnealModel, AnnealingSettings
-
 
 
 def fquad(x):
@@ -16,13 +19,13 @@ def flin(x):
 size = 50
 batch_size = 50
 
-learning_rate_gamma = 0.25
-learning_rate_lmd = 0.001 
-learning_rate_offset = 0.1
-learning_rate_theta = 0
+learning_rate_gamma = 0.02
+learning_rate_lmd = 0.01
+learning_rate_offset = 0.01
+learning_rate_theta = 0.1
 lmd = -0.05
 eps = -2.7
-training_epochs = 500
+training_epochs = 100
 
 ranges_train = [[0,1]]
 ranges_test = [[0, 1]]

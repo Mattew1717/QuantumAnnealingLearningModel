@@ -15,7 +15,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 from utils import AnnealingSettings
 from data_ import SimpleDataset, HiddenNodesInitialization
-from IsingModuleNeuralNetwork.NeuralNetIsing import MultiIsingNetwork
+from NeuralNetIsing import MultiIsingNetwork
 
 # --- Utility Functions ---
 
@@ -142,19 +142,19 @@ def load_csv_dataset(csv_path):
 # --- Hyperparameters and Settings ---
 
 PARTITION_INPUT = False
-NUM_ISING_PERCEPTRONS = 2
-SIZE = 20
-BATCH_SIZE = 32
+NUM_ISING_PERCEPTRONS = 4
+SIZE = 8
+BATCH_SIZE = 8
 EPOCHS = 200
-DATA_INPUT_DIM = 4
+DATA_INPUT_DIM = 3
 TRAINING_SAMPLES = 200
 TEST_SAMPLES = 100
 
 LAMBDA_INIT = -0.01
 OFFSET_INIT = 0
-LEARNING_RATE_GAMMA = 0.05
-LEARNING_RATE_LAMBDA = 0.05
-LEARNING_RATE_OFFSET = 0.05
+LEARNING_RATE_GAMMA = 0.01
+LEARNING_RATE_LAMBDA = 0.01
+LEARNING_RATE_OFFSET = 0.01
 LR_COMBINER = 0.001
 
 PERCENT_TRAIN = 0.5

@@ -5,8 +5,11 @@ import torch
 from torch.utils.data import Dataset
 import numpy as np
 import pickle
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
 
-from ising_learning_model.utils import GammaInitialization, utils
+from utils import GammaInitialization, utils
 from dimod import ExactSolver
 
 

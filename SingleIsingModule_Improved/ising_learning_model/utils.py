@@ -2,6 +2,9 @@
 from __future__ import annotations
 import numpy as np
 import torch
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
 
 class GammaInitialization:
     """Gamma initialization settings for the model."""

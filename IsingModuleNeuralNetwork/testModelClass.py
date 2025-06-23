@@ -17,7 +17,7 @@ from sklearn.preprocessing import MinMaxScaler
 
 from utils import AnnealingSettings
 from data_ import SimpleDataset, HiddenNodesInitialization
-from IsingModuleNeuralNetwork.IsingModule import FullIsingModule
+from IsingModule import FullIsingModule
 
 # --- Utility Functions ---
 
@@ -133,7 +133,7 @@ def load_dataset(csv_path):
 
 SIZE = 8
 BATCH_SIZE = 16
-EPOCHS = 400
+EPOCHS = 200
 
 LAMBDA_INIT = -0.01
 OFFSET_INIT = 0
@@ -147,7 +147,7 @@ CLASSES = [0, 1]
 
 DATA_INPUT_DIM = 3
 TRAINING_SAMPLES = 200
-TEST_SAMPLES = 1
+TEST_SAMPLES = 100
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 RANDOM_SEED = 42
 

@@ -1,9 +1,11 @@
 """ Simulated Annealing Model"""
 from __future__ import annotations
-from ising_learning_model.model import Model
+from model import Model
 from dimod import SampleSet
 from neal import SimulatedAnnealingSampler
-
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
 
 class AnnealingSettings:
     """Settings for the simulated annealing sampler."""

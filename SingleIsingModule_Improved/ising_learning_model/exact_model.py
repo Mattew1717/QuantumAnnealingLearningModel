@@ -1,8 +1,7 @@
 """Exact model."""
 from __future__ import annotations
-from ising_learning_model.model import Model
+from model import Model
 from dimod import ExactSolver, SampleSet
-
 
 class ExactModel(Model):
     """Solves the provided Ising problem exactly using the dimod ExactSolver."""

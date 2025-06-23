@@ -1,14 +1,16 @@
 """QPU model for ising_learning_model."""
 from __future__ import annotations
-
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
     import torch
 
 import numpy as np
-from ising_learning_model.model import Model
-from ising_learning_model.utils import utils
+from model import Model
+from utils import utils
 from dimod import SampleSet
 from dwave.system import (
     DWaveSampler,

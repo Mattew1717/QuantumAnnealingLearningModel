@@ -6,13 +6,15 @@ import pandas as pd
 import torch
 import numpy as np
 import pickle
-
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '.')))
 from dimod import SampleSet
 
 from time import perf_counter
 from torch.utils.data import DataLoader
-from ising_learning_model.utils import GammaInitialization, utils
-from ising_learning_model.data import SimpleDataset, HiddenNodesInitialization
+from utils import GammaInitialization, utils
+from data import SimpleDataset, HiddenNodesInitialization
 
 import threading
 import sys
@@ -251,6 +253,8 @@ class Model(ABC):
             raise ValueError(msg)
         self._training_set = training_set
         self._test_set = test_set
+        
+        input_dim = training_set[0][0].shape[0]
 
         # initialize parameters and hyperparameters
         self._gamma = self.settings.gamma_init.initialize(self.size)
@@ -365,6 +369,7 @@ class Model(ABC):
 
                     #f : energia predetta
                     # y : target    
+                    
                     delta_lmd = np.mean(
                         [   
                             (f - y) * ((f - self._offset) / self._lmd ) 
@@ -387,14 +392,13 @@ class Model(ABC):
                     #    training_set.y.max().numpy() - training_set.y.min().numpy()
                     #) / (np.max(energies_bulk) - np.min(energies_bulk))
                     
+                    
                     self._gamma -= utils.make_upper_triangular(eta_gamma * delta_gamma)
                     self._lmd -= eta_lmd * delta_lmd
                     self._offset -= eta_offset * delta_offset
-                    
-                    #theta learning experiment
-                    #for thetas, ys, indices in train_loader:
-                    #    thetas -= eta_theta * delta_theta
-                        #print(thetas)
+                    for theta in thetas:
+                        theta[input_dim:] -= eta_theta * delta_theta  #update only the hidden nodes
+
 
                     loss = np.mean(losses_bulk)
                     energy = np.mean(energies_bulk)
