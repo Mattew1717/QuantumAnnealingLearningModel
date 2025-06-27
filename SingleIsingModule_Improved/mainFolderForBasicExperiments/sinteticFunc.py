@@ -16,26 +16,26 @@ def flin(x):
 
 
 # Model parameters
-size = 50
+size = 10
 batch_size = 50
 
 learning_rate_gamma = 0.02
-learning_rate_lmd = 0.01
-learning_rate_offset = 0.01
-learning_rate_theta = 0.1
-lmd = -0.05
-eps = -2.7
-training_epochs = 100
+learning_rate_lmd = 0.06
+learning_rate_offset = 0.1
+learning_rate_theta = 0.01
+lmd = -0.3
+eps = -9.30
+training_epochs = 400
 
 ranges_train = [[0,1]]
 ranges_test = [[0, 1]]
-num_samples_train = 20
+num_samples_train = 50
 num_samples_test = 200
 
 # Simulated Annealing settings
 settings_anneal = AnnealingSettings()
 settings_anneal.beta_range = [1, 10]  
-settings_anneal.num_reads = 1
+settings_anneal.num_reads = 100
 settings_anneal.num_sweeps = 1000 
 settings_anneal.sweeps_per_beta = 1
 
@@ -45,8 +45,8 @@ testSet = SimpleDataset()
 
 def main():
     print("\n\n")
-    trainSet.create_data_fun(fquad, num_samples=num_samples_train, ranges=ranges_train)
-    testSet.create_data_fun(fquad, num_samples=num_samples_test, ranges=ranges_test)
+    trainSet.create_data_fun(flin, num_samples=num_samples_train, ranges=ranges_train)
+    testSet.create_data_fun(flin, num_samples=num_samples_test, ranges=ranges_test)
     
     # Create model
     model = SimAnnealModel(size=size, settings=settings_anneal)
@@ -89,13 +89,13 @@ def main():
     '''
 def plotGraphs(x_values, predictions):
     x = np.linspace(0, 1, 200)
-    y = fquad(x) 
+    y = flin(x) 
     plt.figure(figsize=(8, 6))
     plt.plot(x, y, label="target", color='blue')
     plt.scatter(x_values, predictions, color='r', label="predictions")
     plt.xlabel("x")
     plt.ylabel("y")
-    plt.title(f"Predictions on fquad")
+    plt.title(f"Predictions on flin")
     plt.grid(True)
     plt.legend()
     plt.show()

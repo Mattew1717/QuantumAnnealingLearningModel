@@ -25,10 +25,10 @@ class MultiIsingNetwork(nn.Module):
         self.ising_perceptrons_layer = nn.ModuleList()
         for i in range(num_ising_perceptrons):
             # Noise per diversificare lambda e offset
-            #lambda_i = lambda_init + np.random.uniform(-0.1, 0.1)
-            #offset_i = offset_init + np.random.uniform(-0.1, 0.1)
-            lambda_i = lambda_init
-            offset_i = offset_init
+            lambda_i = lambda_init + np.random.uniform(-0.1, 0.1)
+            offset_i = offset_init + np.random.uniform(-0.1, 0.1)
+            #lambda_i = lambda_init
+            #offset_i = offset_init
 
             module = FullIsingModule(
                 sizeAnnealModel=sizeAnnealModel,
@@ -38,8 +38,8 @@ class MultiIsingNetwork(nn.Module):
             )
 
             with torch.no_grad():
-                #random_gamma = torch.randn(sizeAnnealModel, sizeAnnealModel) * 0.01 + np.random.uniform(-0.1, 0.1)
-                random_gamma = torch.randn(sizeAnnealModel, sizeAnnealModel) * 0
+                random_gamma = torch.randn(sizeAnnealModel, sizeAnnealModel) * 0.01 + np.random.uniform(-0.1, 0.1)
+                #random_gamma = torch.randn(sizeAnnealModel, sizeAnnealModel) * 0
                 random_gamma = torch.triu(random_gamma, diagonal=1)
                 module.ising_layer.gamma.copy_(random_gamma)
 

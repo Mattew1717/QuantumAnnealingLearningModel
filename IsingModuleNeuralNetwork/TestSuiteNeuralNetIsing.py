@@ -20,15 +20,15 @@ from utils import AnnealingSettings
 # --- Hyperparameters ---
 PARTITION_INPUT = False
 NUM_ISING_PERCEPTRONS = 5
-SIZE = 8
-BATCH_SIZE = 16
+SIZE = 16
+BATCH_SIZE = 8
 EPOCHS = 200
 LAMBDA_INIT = -0.01
 OFFSET_INIT = 0
-LEARNING_RATE_GAMMA = 0.05
-LEARNING_RATE_LAMBDA = 0.01
-LEARNING_RATE_OFFSET = 0.05
-LR_COMBINER = 0.01
+LEARNING_RATE_GAMMA = 0.01
+LEARNING_RATE_LAMBDA = 0.005
+LEARNING_RATE_OFFSET = 0.01
+LR_COMBINER = 0.005
 CLASSES = [0, 1]
 RANDOM_SEED = 42
 
@@ -38,8 +38,8 @@ HN_fun_args = [-1 / SIZE * 1]
 
 SA_settings = AnnealingSettings()
 SA_settings.beta_range = [1, 10]
-SA_settings.num_reads = 1
-SA_settings.num_sweeps = 100
+SA_settings.num_reads = 100
+SA_settings.num_sweeps = 1000
 SA_settings.sweeps_per_beta = 1
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
