@@ -8,7 +8,7 @@ import threading
 NUM_THREADS = 16
 
 AnnealModel = SimAnnealModel
-#Attenzione: se si usa QPUModel, il numero di thread deve essere 1
+#Attention: Set NUM_THREADS to 1 if you use QPUModel
 # AnnealModel = QPUModel
 # AnnealModel = ExactModel
 
@@ -37,7 +37,7 @@ class IsingEnergyFunction(Function):
                 energies_bulk[i] = sample_set.first.energy
                 configurations_bulk[i] = list(sample_set.first.sample.values())
 
-        # Divide il batch in blocchi per sfruttare il multithreading
+        # Divide the batch into chunks for multithreading
         chunk_size = (batch_size + NUM_THREADS - 1) // NUM_THREADS
         threads = []
 
@@ -56,7 +56,7 @@ class IsingEnergyFunction(Function):
         configurations_bulk = np.array(configurations_bulk)
         configurations_bulk = torch.tensor(configurations_bulk, dtype=thetas.dtype, device=thetas.device)
 
-        # Salva z_star per il backward.
+        # Save z_star for backward.
         ctx.save_for_backward(configurations_bulk)
         
         return energies_bulk
@@ -67,8 +67,8 @@ class IsingEnergyFunction(Function):
         configurations_bulk, = ctx.saved_tensors # (batch_size, num_spins)
         batch_size, num_spins = configurations_bulk.shape
 
-        # Calcola dL/dgamma_ij = sum_over_batch( (dL/dE0) * (dE0/dgamma_ij) ) / batch_size
-        # Dove dE0/dgamma_ij = z_k_i * z_k_j (configurazione ottimale).
+        # Compute dL/dgamma_ij = sum_over_batch( (dL/dE0) * (dE0/dgamma_ij) ) / batch_size
+        # Where dE0/dgamma_ij = z_k_i * z_k_j (optimal configuration).
         
         z_i = configurations_bulk.unsqueeze(2) 
         z_j = configurations_bulk.unsqueeze(1) 
@@ -84,7 +84,7 @@ class IsingEnergyFunction(Function):
         return None, grad_gamma, None
 
 
-# PyTorch nn.Module Layer (calcola E0)
+# PyTorch nn.Module Layer (Compute E0)
 class IsingLayer(nn.Module):
 
     def __init__(self, sizeAnnealModel: int, anneal_settings: AnnealingSettings = AnnealingSettings()):
@@ -97,7 +97,7 @@ class IsingLayer(nn.Module):
     def forward(self, thetas: torch.Tensor) -> torch.Tensor:
         return IsingEnergyFunction.apply(thetas, self.gamma, self.annealModel)
 
-#calcola lambda * E0 + offset
+#compute lambda * E0 + offset
 class FullIsingModule(nn.Module):
     def __init__(self, sizeAnnealModel: int, 
                  anneal_settings: AnnealingSettings = AnnealingSettings(),
@@ -107,7 +107,7 @@ class FullIsingModule(nn.Module):
         self.sizeAnnealModel = sizeAnnealModel
         self.ising_layer = IsingLayer(sizeAnnealModel, anneal_settings)
         
-        # Parametri learnable
+        # learnable parameters
         self.lmd = nn.Parameter(torch.tensor(lambda_init, dtype=torch.float32))
         self.offset = nn.Parameter(torch.tensor(offset_init, dtype=torch.float32))
 

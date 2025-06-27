@@ -24,7 +24,7 @@ class MultiIsingNetwork(nn.Module):
     
         self.ising_perceptrons_layer = nn.ModuleList()
         for i in range(num_ising_perceptrons):
-            # Noise per diversificare lambda e offset
+            # Noise to the initial parameters
             lambda_i = lambda_init + np.random.uniform(-0.1, 0.1)
             offset_i = offset_init + np.random.uniform(-0.1, 0.1)
             #lambda_i = lambda_init
@@ -101,7 +101,7 @@ class MultiIsingNetwork(nn.Module):
             avg_epoch_loss = running_loss / num_batches
             losses.append(avg_epoch_loss)
             if (epoch + 1) % print_every == 0:
-                print(f"[Epoch {epoch+1}/{epochs}] Loss Media: {avg_epoch_loss:.4f}")
+                print(f"[Epoch {epoch+1}/{epochs}] Loss: {avg_epoch_loss:.4f}")
 
         return losses
     
@@ -115,7 +115,7 @@ class MultiIsingNetwork(nn.Module):
         all_predictions_list = []
         all_targets_list = []
 
-        with torch.no_grad():  # Disabilita il calcolo dei gradienti
+        with torch.no_grad():  # disable gradient calculation for testing
             for x_batch, y_batch in test_loader:
                 x_batch = x_batch.to(device)
 
@@ -124,7 +124,7 @@ class MultiIsingNetwork(nn.Module):
                 all_predictions_list.append(preds_raw_batch.cpu().numpy())
                 all_targets_list.append(y_batch.cpu().numpy())
 
-        # Concatena i risultati da tutti i batch
+        # Concatenate all predictions and targets
         predictions_raw = np.concatenate(all_predictions_list) if all_predictions_list else np.array([])
         true_targets = np.concatenate(all_targets_list) if all_targets_list else np.array([])
 

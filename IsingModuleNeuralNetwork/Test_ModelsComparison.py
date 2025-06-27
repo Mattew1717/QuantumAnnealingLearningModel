@@ -222,7 +222,7 @@ def main():
     print(df_results)
     df_results.to_csv("ModelComparison_results.csv", index=False)
 
-    # Boxplot scientifico
+    # Boxplot
     plt.style.use('classic')
     fig, ax = plt.subplots(figsize=(10, 6))
     datasets = list(all_accs["Single"].keys())

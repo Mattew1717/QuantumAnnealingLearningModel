@@ -37,17 +37,17 @@ RANGES_TEST = [[0, 1]]
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 RANDOM_SEED = 42
 
-# === Settings Simulated Annealing ===
 SA_settings = AnnealingSettings()
 SA_settings.beta_range = [1, 10]
 SA_settings.num_reads = 1
 SA_settings.num_sweeps = 1000
 SA_settings.sweeps_per_beta = 1
 
-# === Funzione principale ===
+
 def main():
 
-    # 1. Generazione dei dati
+    # 1. Dataset creation
+    torch.manual_seed(RANDOM_SEED)
     dataset = SimpleDataset()
     test_set = SimpleDataset()
     dataset.create_data_fun(FUNC, num_samples=NUM_SAMPLES_TRAIN, ranges=RANGES_TRAIN)
@@ -66,7 +66,7 @@ def main():
     test_set.len = len(test_set.y)
     test_set.data_size = len(test_set.x[0])
 
-    # Conversione a tensori
+    # Conversion to tensors
     X_train = dataset.x.detach().clone().float()
     y_train = dataset.y.detach().clone().float().view(-1)
     X_test = test_set.x.detach().clone().float()

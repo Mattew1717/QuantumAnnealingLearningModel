@@ -71,22 +71,9 @@ def main():
     predictions = (r_test.results_samples["energy"])
 
     x_pti = [e[0] for e in testSet.x]
-    #model._save_model("C:/Users/Matteo/Documents/GitHub/IsingModel/Ising_Learning_Model/ising-learning-model-main/modelSaved/funcQuad.pkt")
+    #model._save_model("")
     plotGraphs(x_pti, predictions)
-    '''
-    model.settings.learning_rate_theta = 1   
-    model.settings.learning_rate_gamma = 0
-    model.settings.learning_rate_lmd = 0
-    model.settings.learning_rate_offset = 0
-
-    results = model.train(training_set=trainSet, save_params=True, save_samples=False, verbose=False)
-    r_test = model.test(testSet)
-    predictions = (r_test.results_samples["energy"])
-
-    x_pti = [e[0] for e in testSet.x]
-    #model._save_model("C:/Users/Matteo/Documents/GitHub/IsingModel/Ising_Learning_Model/ising-learning-model-main/modelSaved/funcQuad.pkt")
-    plotGraphs(x_pti, predictions)
-    '''
+    
 def plotGraphs(x_values, predictions):
     x = np.linspace(0, 1, 200)
     y = flin(x) 

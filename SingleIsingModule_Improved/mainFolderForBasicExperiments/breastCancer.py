@@ -108,7 +108,7 @@ def main():
     errors_class_1 = np.sum((targets == 1) & errors)
     accuracy = accuracy_score(pred, targets)
     plot_confusion_matrix(test_set.y.numpy(), pred)
-    #model._save_model("C:/Users/Matteo/Documents/GitHub/IsingModel/Ising_Learning_Model/ising-learning-model-main/modelSaved/04_seeds_1_2_2.pkt")
+    #model._save_model("")
 
     print("predictions: ", predictions)
     print("targets: ", targets)

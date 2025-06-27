@@ -2,8 +2,8 @@ import torch
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
-from ising_learning_model.data import SimpleDataset, HiddenNodesInitialization, GammaInitialization
-from ising_learning_model.sim_anneal_model import SimAnnealModel, AnnealingSettings
+from SingleIsingModule_Improved.ising_learning_model.data import SimpleDataset, HiddenNodesInitialization, GammaInitialization
+from SingleIsingModule_Improved.ising_learning_model.sim_anneal_model import SimAnnealModel, AnnealingSettings
 from sklearn.metrics import accuracy_score
 from sklearn.metrics import confusion_matrix
 import seaborn as sns
@@ -210,7 +210,7 @@ def main():
     outputs = model.output_layer(res_test).detach().numpy().squeeze()
     pred = np.where(outputs < 0.5, 0, 1)
     accuracy = accuracy_score(pred, test_set.y.numpy())
-    print("Accuracy finale:", accuracy)
+    print("final accuracy:", accuracy)
     plot_confusion_matrix(test_set.y.numpy(), pred)
 
 

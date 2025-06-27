@@ -175,9 +175,7 @@ def main():
             training_losses, y_pred = train_and_eval(X_train, y_train, X_val, y_val, input_dim, SIZE)
 
             if(run_idx == 1):
-                # Salva training loss plot di una sola run
                 plot_training_loss(training_losses, model_name, dataset_name)
-                # Salva confusion matrix plot di una sola run
                 plot_confusion_matrix_scientific(y_val, y_pred, model_name, dataset_name)
 
             accs.append(accuracy_score(y_val, y_pred))

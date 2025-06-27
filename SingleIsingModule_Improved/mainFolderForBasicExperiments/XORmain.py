@@ -33,7 +33,7 @@ def plot_confusion_matrix(y_true, y_pred):
 
 def generate_xor_balanced(dim, n_samples_dim=1000, shuffle=True):
     '''
-    Generate XOR data in U[-1,1]^d with balanced classes.
+    Generate XOR data in U[0,1]^d with balanced classes.
 
     :param dim(int): dimension of the XOR problem
     :param n_samples_dim(int, optional): number of samples in each region
@@ -53,20 +53,7 @@ def generate_xor_balanced(dim, n_samples_dim=1000, shuffle=True):
         labels = labels[perm]
     labels = np.where(labels < 0, 0, 1)
     return samples, labels
-'''
-def generate_xor_balanced(dim, n_samples_dim=1000, shuffle=True):
-    
-    samples = np.random.random(size=(2**dim*n_samples_dim, dim))
-    for i in range(2**dim):
-        signs = np.array([1 if int((i // 2**d) % 2) == 0 else -1 for d in range(dim)])
-        samples[i*n_samples_dim:(i+1)*n_samples_dim] *= signs
-    labels = np.sign(np.prod(samples, axis=1))
-    if shuffle:
-        perm = np.random.permutation(2**dim*n_samples_dim)
-        samples = samples[perm]
-        labels = labels[perm]
-    return samples, labels
-'''
+
 # Model parameters
 size = 120
 batch_size = 20000
