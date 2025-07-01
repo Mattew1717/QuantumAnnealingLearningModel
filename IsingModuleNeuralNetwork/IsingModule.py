@@ -10,6 +10,9 @@ NUM_THREADS = 16
 AnnealModel = SimAnnealModel
 #Attention: Set NUM_THREADS to 1 if you use QPUModel
 # AnnealModel = QPUModel
+if AnnealModel == QPUModel:
+    print("Setting NUM_THREADS = 1 because  QPUModel")
+    NUM_THREADS = 1
 # AnnealModel = ExactModel
 
 # PyTorch Custom Autograd Function

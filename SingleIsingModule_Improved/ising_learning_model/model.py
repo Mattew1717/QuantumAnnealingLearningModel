@@ -18,6 +18,8 @@ from data import SimpleDataset, HiddenNodesInitialization
 
 import threading
 import sys
+
+
 NUM_THREADS = 16
 
 class ModelSetting:
@@ -105,7 +107,14 @@ class Model(ABC):
         self.settings = ModelSetting()
         self._gamma = np.zeros((size, size))
         self._lmd = self.lmd_init_value
-
+        
+    def __init_subclass__(cls, **kwargs):
+        super().__init_subclass__(**kwargs)
+        global NUM_THREADS
+        if cls.__name__ == "QPUModel":
+            print(f"Setting NUM_THREADS = 1 because {cls.__name__} inherits from Model")
+            NUM_THREADS = 1
+            
     def eval_single(self, theta: np.array) -> SampleSet:
         """
         Evaluate the model.

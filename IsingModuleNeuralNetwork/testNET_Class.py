@@ -143,8 +143,8 @@ def load_csv_dataset(csv_path):
 
 PARTITION_INPUT = False
 NUM_ISING_PERCEPTRONS = 5
-SIZE = 8
-BATCH_SIZE = 8
+SIZE = 10
+BATCH_SIZE = 16
 EPOCHS = 200
 DATA_INPUT_DIM = 4
 TRAINING_SAMPLES = 20
@@ -163,6 +163,7 @@ CLASSES = [0, 1]
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 RANDOM_SEED = 42
+
 
 # Simulated Annealing settings
 SA_settings = AnnealingSettings()
