@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 from utils import AnnealingSettings
 from data_ import SimpleDataset,HiddenNodesInitialization
 from torch.utils.data import TensorDataset, DataLoader
-from IsingModuleNeuralNetwork.IsingModule import FullIsingModule
+from IsingModule import FullIsingModule
 
 
 def fquad(x):
@@ -15,24 +15,29 @@ def fquad(x):
 def flin(x):
     return 2 * x - 6
 
+def flog(x):
+    return np.log(x)
 
-FUNC = fquad
+def fEmil(x):
+    return 0.5*x if x<0 else np.log(x+1) 
 
-SIZE = 50
+FUNC = fEmil
+
+SIZE = 20
 BATCH_SIZE = 50
-EPOCHS = 500
+EPOCHS = 2
 
-LAMBDA_INIT = -0.05
-OFFSET_INIT = -2.70
+LAMBDA_INIT = 1
+OFFSET_INIT = -2.4
 LEARNING_RATE_GAMMA = 0.25
-LEARNING_RATE_LAMBDA = 0.001
-LEARNING_RATE_OFFSET = 0.1
+LEARNING_RATE_LAMBDA = 1e-5
+LEARNING_RATE_OFFSET = 0.01
 
-NUM_SAMPLES_TRAIN = 200
-RANGES_TRAIN = [[0, 1]]
+NUM_SAMPLES_TRAIN = 50
+RANGES_TRAIN = [[-1, 1]]
 
 NUM_SAMPLES_TEST = 200
-RANGES_TEST = [[0, 1]]
+RANGES_TEST = [[-2, 2]]
 
 DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
 RANDOM_SEED = 42

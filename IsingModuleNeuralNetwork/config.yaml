@@ -1,0 +1,47 @@
+task: regression         # "regression" or "classification"
+model: single            # "single" or "network"
+num_ising_perceptrons: 5 # used only if model=network
+size: 50
+batch_size: 50
+epochs: 100
+
+lambda_init: -0.05
+offset_init: -2.7
+learning_rate_gamma: 0.25
+learning_rate_lambda: 0.001
+learning_rate_offset: 0.1
+learning_rate_combiner: 0.01
+learning_rate_theta: 0.01
+
+random_seed: 42
+optimizer: sgd
+loss_function: mse
+
+#simulated annealing settings
+sa_settings:
+  beta_range: [1, 10]
+  num_reads: 1
+  num_sweeps: 1000
+  sweeps_per_beta: 1
+
+#hidden nodes settings
+hidden_nodes_init: function
+hidden_nodes_function: offset
+hidden_nodes_args: [-0.02]
+
+#only for regression
+num_samples_train: 200
+num_samples_test: 200
+ranges_train: [[0, 1]]
+ranges_test: [[0, 1]]
+function: quadratic  # "linear", "quadratic", "cubic"
+
+#only for classification
+dataset_path: ../datasets/01_iris_setosa_versicolor.csv
+percent_train: 0.8
+scaler: None
+
+xor: true                
+xor_dim: 2               
+xor_train_samples: 1000 
+xor_test_samples: 200

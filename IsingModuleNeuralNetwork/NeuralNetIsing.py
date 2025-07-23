@@ -25,6 +25,7 @@ class MultiIsingNetwork(nn.Module):
         self.ising_perceptrons_layer = nn.ModuleList()
         for i in range(num_ising_perceptrons):
             # Noise to the initial parameters
+            #lambda_i = (-1 ** (i //2) )*lambda_init 
             lambda_i = lambda_init + np.random.uniform(-0.1, 0.1)
             offset_i = offset_init + np.random.uniform(-0.1, 0.1)
             #lambda_i = lambda_init
