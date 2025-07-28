@@ -20,6 +20,10 @@ This project likely requires common Python libraries for scientific computing an
 
 Please ensure these are installed in your Python environment.
 
+'''
+pip install torch torchvision numpy pandas matplotlib seaborn scikit-learn dimod dwave-neal dwave-system networkx PyYAML
+'''
+
 ## License
 
 Refer to the `LICENSE.md` file for licensing information.
